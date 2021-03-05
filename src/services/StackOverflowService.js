@@ -1,10 +1,11 @@
 import axios from "axios";
 
 export default {
-  getQuestions(tag) {
+  // TODO: Update this to use current date and the week before as opposed to hard coded
+  getQuestionsByVotes(tag) {
     return new Promise((resolve, reject) => {
       axios
-        .get(`https://api.stackexchange.com/2.2/search?fromdate=1614211200&todate=1614816000&order=desc&sort=activity&tagged=${tag}&site=stackoverflow`)
+        .get(`https://api.stackexchange.com/2.2/search?pagesize=10&fromdate=1614211200&todate=1614816000&order=desc&sort=votes&tagged=${tag}&site=stackoverflow`)
         .then(res => {
           resolve(res.data);
         })
