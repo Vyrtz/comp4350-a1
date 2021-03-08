@@ -1,24 +1,26 @@
 <template>
   <BContainer>
-    <BInputGroup prepend="Tag:" class="mt-3">
+    <h1 class="text-center">Stack Overflow API Program</h1>
+    <BInputGroup prepend="Tag:" class="mt-3 mb-3">
       <BFormInput v-model="tag"></BFormInput>
       <BInputGroupAppend>
         <BButton variant="success" @click="submit()">Submit</BButton>
       </BInputGroupAppend>
     </BInputGroup>
+
     <div :key="index" v-for="(item, index) in questions">
       <BCard no-body>
         <BCardHeader header-tag="header" class="p-1" role="tab">
           <BButton block v-b-toggle="'accordion-' + index" variant="info">
-            {{item.title}}
-            <BRow>
+            <span>{{ item.title }}</span>
+            <BRow class="mt-3">
               <BCol>
-                <BIcon icon="check" />
-                {{item.score}}
+                <BIcon icon="check2" />
+                {{ item.score }}
               </BCol>
               <BCol>
-                <BIcon icon="calendar-date" />
-                {{item.creation_date}}
+                <BIcon icon="calendar" />
+                {{ toDate(item.creation_date) }}
               </BCol>
             </BRow>
           </BButton>
@@ -40,18 +42,36 @@ export default {
   data() {
     return {
       tag: "",
-      questions: []
-
+      questionsByVotes: [],
+      questionsByDate: [],
     }
   },
   methods: {
     submit() {
-      this.questions = [];
+      // TODO: Do validation for if the entry is already in there?
       if (this.tag.trim() !== "") {
         StackOverflowService.getQuestionsByVotes(this.tag.trim()).then(response => {
-          this.questions = response.items;
+          this.questionsByVotes = response.items;
         });
+
+        StackOverflowService.getQuestionsByCreationDate(this.tag.trim()).then(response => {
+          this.questionsByDate = response.items;
+        })
+      } else {
+        this.questionsByVotes = [];
+        this.questionsByDate = [];
       }
+    },
+    toDate(date) {
+      // TODO: Timezone?
+      return new Date(date*1000).toLocaleDateString('en-US');
+    }
+  },
+  computed: {
+    questions: function() {
+      return this.questionsByVotes.concat(this.questionsByDate).sort(function(x, y) {
+        return y.creation_date - x.creation_date;
+      });
     }
   }
 }
