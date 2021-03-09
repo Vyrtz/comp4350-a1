@@ -7,27 +7,62 @@
         <BButton variant="success" @click="submit()">Submit</BButton>
       </BInputGroupAppend>
     </BInputGroup>
-
     <div :key="index" v-for="(item, index) in questions">
       <BCard no-body>
-        <BCardHeader header-tag="header" class="p-1" role="tab">
+        <BCardHeader header-tag="header" class="p-1">
           <BButton block v-b-toggle="'accordion-' + index" variant="info">
-            <span>{{ item.title }}</span>
+            <BCardText>{{ item.title }}</BCardText>
             <BRow class="mt-3">
               <BCol>
                 <BIcon icon="check2" />
-                {{ item.score }}
+                <BCardText>Score: {{ item.score }}</BCardText>
               </BCol>
               <BCol>
                 <BIcon icon="calendar" />
-                {{ toDate(item.creation_date) }}
+                <BCardText>{{ toDate(item.creation_date) }}</BCardText>
               </BCol>
             </BRow>
           </BButton>
         </BCardHeader>
-        <BCollapse :id="'accordion-' + index" accordion="my-accordion" role="tabpanel">
+        <BCollapse :id="'accordion-' + index">
           <BCardBody>
-            <!-- TODO: Insert body information here -->
+            <BCardText v-html="item.body" class="question-body"></BCardText>
+            <div v-if="item.comments">
+              <h5 class="pt-2 topLine">Comments:</h5>
+              <div class="mb-4">
+                <BCard v-for="comment in item.comments" :key="comment.comment_id" class="mb-1">
+                  <BCardText v-html="comment.body"></BCardText>
+                  <BRow class="mt-3">
+                    <BCol>
+                      <BIcon icon="check2" />
+                      Score: {{ comment.score }}
+                    </BCol>
+                    <BCol>
+                      <BIcon icon="calendar" />
+                      {{ toDate(comment.creation_date) }}
+                    </BCol>
+                  </BRow>
+                </BCard>
+              </div>
+            </div>
+            <div v-if="item.answers">
+              <h5 class="pt-2 topLine">Answers:</h5>
+              <div class="mb-4">
+                <BCard v-for="answer in item.answers" :key="answer.answer_id" class="mb-1">
+                  <BCardText v-html="answer.body"></BCardText>
+                  <BRow class="mt-3">
+                    <BCol>
+                      <BIcon icon="check2" />
+                      Score: {{ answer.score }}
+                    </BCol>
+                    <BCol>
+                      <BIcon icon="calendar" />
+                      {{ toDate(answer.creation_date) }}
+                    </BCol>
+                  </BRow>
+                </BCard>
+              </div>
+            </div>
           </BCardBody>
         </BCollapse>
       </BCard>
@@ -56,14 +91,13 @@ export default {
 
         StackOverflowService.getQuestionsByCreationDate(this.tag.trim()).then(response => {
           this.questionsByDate = response.items;
-        })
+        });
       } else {
         this.questionsByVotes = [];
         this.questionsByDate = [];
       }
     },
     toDate(date) {
-      // TODO: Timezone?
       return new Date(date*1000).toLocaleDateString('en-US');
     }
   },
@@ -76,3 +110,13 @@ export default {
   }
 }
 </script>
+
+<style>
+.topLine {
+  border-top: grey 1px solid;
+}
+
+.question-body > p > a > img {
+  width: 100%;
+}
+</style>

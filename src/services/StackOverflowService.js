@@ -1,11 +1,10 @@
 import axios from "axios";
 
 export default {
-  // TODO: Update this to use current date and the week before as opposed to hard coded
   getQuestionsByVotes(tag) {
     return new Promise((resolve, reject) => {
       axios
-        .get(`https://api.stackexchange.com/2.2/search?pagesize=10&fromdate=1614211200&todate=1614816000&order=desc&sort=votes&tagged=${encodeURIComponent(tag)}&site=stackoverflow`)
+        .get(`https://api.stackexchange.com/2.2/search?pagesize=10&fromdate=${Math.round(Date.now() / 1000) - 604800}&todate=${Math.round(Date.now() / 1000)}&order=desc&sort=votes&tagged=${encodeURIComponent(tag)}&site=stackoverflow&filter=!)c5QMjAfN_hsS6_ATZqTJosPmF20HM-hQYW-mgXaI.tB1`)
         .then(res => {
           resolve(res.data);
         })
@@ -17,7 +16,7 @@ export default {
   getQuestionsByCreationDate(tag) {
     return new Promise((resolve, reject) => {
       axios
-        .get(`https://api.stackexchange.com/2.2/search?pagesize=10&fromdate=1614211200&todate=1614816000&order=desc&sort=creation&tagged=${encodeURIComponent(tag)}&site=stackoverflow`)
+        .get(`https://api.stackexchange.com/2.2/search?pagesize=10&fromdate=${Math.round(Date.now() / 1000) - 604800}&todate=${Math.round(Date.now() / 1000)}&order=desc&sort=creation&tagged=${encodeURIComponent(tag)}&site=stackoverflow&filter=!)c5QMjAfN_hsS6_ATZqTJosPmF20HM-hQYW-mgXaI.tB1`)
         .then(res => {
           resolve(res.data);
         })
