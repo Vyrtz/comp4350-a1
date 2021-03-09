@@ -4,7 +4,7 @@
       <BCard no-body>
         <BCardHeader header-tag="header" class="p-1">
           <BButton block v-b-toggle="'accordion-' + index" variant="info">
-            <BCardText>{{ item.title }}</BCardText>
+            <BCardText v-html="item.title"></BCardText>
             <BRow class="mt-3">
               <BCol>
                 <BIcon icon="check2" />
